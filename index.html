@@ -676,6 +676,9 @@ body.is-dragging,body.is-dragging *{user-select:none;-webkit-user-select:none;cu
 
 .bsep{height:10px}
 
+#app{height:var(--apph,auto)}
+html{background:var(--bg)}
+
 </style>
 </head>
 <body>
@@ -2535,6 +2538,13 @@ if (S.active) ui.training = true;
 render();
 startDb();
 splashTick();
+// iOS-Home-Bildschirm: Viewport ist dort teils kürzer als der Bildschirm, dann bleibt unten ein Streifen frei
+function fitStandalone() {
+  if (!STANDALONE || window.top !== window || !(navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches))) return;
+  const portrait = innerHeight >= innerWidth, full = portrait ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
+  document.documentElement.style.setProperty('--apph', Math.max(innerHeight, full) + 'px');
+}
+fitStandalone(); addEventListener('resize', fitStandalone); addEventListener('orientationchange', () => setTimeout(fitStandalone, 300));
 if (STANDALONE && 'serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => { }));
 
 </script>
